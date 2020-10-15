@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/index.css">
+    <!-- 1.0 引入文件 -->
+    <script src="./assets/socket/socket.io.js"></script>
+</head>
+<body>
+    <!-- 每一个进来的用户，都需要创建自己的用户名称 -->
+    <div class="input-name">
+        <!-- <input type="text" placeholder="请输入您的用户名" id="username"> -->
+        <select id="username">
+            <option value="陈凯">陈凯</option>
+            <option value="胡超">胡超</option>
+            <option value="七月的枫">七月的枫</option>
+            <option value="杨风">杨风</option>
+            <option value="周密">周密</option>
+        </select>
+        <br>
+        <br>
+        <button style="width: 200px;" id="join_chat">立即加入到0630班级群聊</button>
+    </div>
+
+    <div id="box" style="display: none;">
+       <div id="msg">
+       </div>
+       <div id="text_in">
+           <input type="text" id="text">
+           <button id="btn">发&nbsp;&nbsp;送</button>
+       </div>
+    </div>
+
+    
+    <script>
+        function $(str) {
+            return document.querySelector(str)
+        }
+
+        // 设置当前用户名称
+        var curName = ''
+        // 选定了角色之后，存起来，并且切换聊天界面显示
+        $('#join_chat').addEventListener('click', () => {
+            curName = $("#username").value
+            $('.input-name').style.display = 'none'
+            $("#box").style = 'display: block;'
+
+            // 以前是一上来就发请求，但是现在需要在这里发请求
+            // 2.0 通过 io 顶级对象连接地址获得连接对象
+            const socket = io.connect('http://127.0.0.1:8888', {
+                query: 'users=' + curName
+            })
+
+            // 3.0 接受服务端的广播信息
+            socket.on('tips', data => {
+                msg.innerHTML += `
+                    <div class="online-tips"> ${data}</div>`
+            })
+
+            // 4.0 注册事件
+            btn.addEventListener('click', () => {
+                msg.innerHTML += `<div class="msg-right">
+                            <p class="mine-msg">${text.value}</p>
+                            <img src="./images/${curName}.jpg" alt="">
+                    </div>`
+                socket.emit('updateMsg', text.value)
+                text.value = ''
+            })
+
+            // 5.0 监听服务端更新消息的事件
+            socket.on('sendMsg', obj => {
+                msg.innerHTML += `
+                    <div>
+                            <img src="./images/${obj.users}.jpg" alt="">
+                            <p> ${obj.data}</p>
+                    </div>`
+            })
+
+
+            /* 
+            // 3.0 监听服务器触发的方法，得到响应的数据
+            socket.on('msgs', data => {
+                msg.innerHTML += `
+                    <div>
+                            <img src="./images/周密.jpg" alt="">
+                            <p> ${data}</p>
+                    </div>`
+            })
+
+            // 4.0 注册事件
+            btn.addEventListener('click', () => {
+                msg.innerHTML += `<div class="msg-right">
+                    <p class="mine-msg">${text.value}</p>
+                    <img src="./images/${curName}.jpg" alt="">
+            </div>`
+                socket.emit('sts', text.value)
+                text.value = ''
+            })
+            */
+        })
+
+        
+
+
+
+    </script>
+</body>
+</html>

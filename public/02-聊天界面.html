@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 1.0 引入文件 -->
+    <script src="./assets/socket/socket.io.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #box {
+            position: relative;
+            width: 370px;
+            height: 400px;
+            border: 1px solid #ccc;
+            margin: 30px;
+            padding: 20px;
+            border-radius: 5px;
+            background: url(./images/bg1.jpg) no-repeat;
+            background-size: 412px;
+        }
+        #msg {
+            height: 370px;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #msg > div {
+            display: flex;
+        }
+        #msg .msg-right {
+            align-self: flex-end;
+        }
+
+        #msg > div > img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transform: translateY(5px);
+        }
+
+        p,
+        .mine-msg {
+            /* width: 50%; */
+            align-self: flex-start;
+            line-height: 24px;
+            background: linear-gradient(to bottom, #0085c3,#03a9f4);
+            border-radius: 14px 14px 14px 0;
+            color: #fff;
+            padding: 4px 15px;
+            margin: 10px;
+            box-shadow: 1px 10px 15px rgba(0, 0, 0, .15);
+            text-shadow: 2px 2px 2px rgba(0, 0, 0, .2);
+            border: 1px solid #55c6fa;
+        }
+
+        .mine-msg {
+            border: 1px solid #84ff88;
+            background: linear-gradient(to bottom, #02bb08,#4caf50);
+            border-radius: 14px 14px 0 14px;
+            text-align: right;
+        }
+
+        #text_in {
+            display: flex;
+            justify-content: space-between;
+            width: 88% ;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%);
+            text-align: center;
+            padding: 20px;
+        }
+
+        button {
+            width: 100px;
+            background-color: #03A9F4;
+            border: 1px solid #03A9F4;
+            line-height: 24px;
+            border-radius: 12px;
+            color: #fff;
+            outline: none;
+            cursor: pointer;
+        }
+
+        input {
+            flex: 1;
+            line-height: 24px;
+            outline: none;
+            text-indent: 1em;
+            margin-right: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="box">
+       <div id="msg">
+       </div>
+       <div id="text_in">
+           <input type="text" id="text">
+           <button id="btn">发&nbsp;&nbsp;送</button>
+       </div>
+    </div>
+
+    
+    <script>
+        // 2.0 通过 io 顶级对象连接地址获得连接对象
+        const socket = io.connect('http://127.0.0.1:8888')
+
+        // 3.0 监听服务器触发的方法，得到响应的数据
+        socket.on('msgs', data => {
+            msg.innerHTML += `
+           <div>
+                <img src="./images/周密.jpg" alt="">
+                <p> ${data}</p>
+           </div>`
+        })
+
+        // 4.0 注册事件
+        btn.addEventListener('click', () => {
+            msg.innerHTML += `<div class="msg-right">
+                <p class="mine-msg">${text.value}</p>
+                <img src="./images/胡超.jpg" alt="">
+           </div>`
+            socket.emit('sts', text.value)
+            text.value = ''
+        })
+    </script>
+</body>
+</html>

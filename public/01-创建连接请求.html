@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- 1.0 引入文件 -->
+    <script src="./assets/socket/socket.io.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #box {
+            width: 370px;
+            height: 500px;
+            border: 1px solid #ccc;
+            margin: 30px;
+        }
+
+        p {
+            width: 50%;
+            line-height: 24px;
+            background-color: green;
+            border-radius: 14px;
+            color: #fff;
+            padding: 4px 10px;
+            margin: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="box">
+       
+    </div>
+    
+    <script>
+        // 2.0 通过 io 顶级对象连接地址获得连接对象
+        const socket = io.connect('http://127.0.0.1:8888')
+
+        // 3.0 监听服务器触发的方法，得到响应的数据
+        socket.on('msgs', data => {
+            box.innerHTML += `<p>${data}</p>`
+        })
+    </script>
+</body>
+</html>
